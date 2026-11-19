@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CS Financeiro</title>
+  <meta name="description" content="Controle financeiro e contábil da CS Serviços Administrativos">
+  <meta name="theme-color" content="#0f3d33" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1412" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CS Financeiro">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <p class="eyebrow">CS SERVICOS ADMINISTRATIVOS · 69.388.555/0001-59</p>
+        <h1 class="brand">CS Financeiro</h1>
+      </div>
+      <button id="btn-refresh" class="icon-btn" aria-label="Atualizar" hidden>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 4a8 8 0 0 1 7.75 6h-2.1A6 6 0 1 0 18 14h2a8 8 0 1 1-8-10zm6-1v6h-6l2.2-2.2A5.9 5.9 0 0 0 12 6V4c2.2 0 4.2.9 5.6 2.4L18 3z"/></svg>
+      </button>
+    </div>
+    <p id="status" class="status" aria-live="polite"></p>
+  </header>
+
+  <main id="main">
+    <!-- Configuração pendente -->
+    <section id="view-setup" class="view" hidden>
+      <div class="card center">
+        <h2>Falta configurar</h2>
+        <p>Abra o arquivo <code>config.js</code> e cole o <b>ID do aplicativo (cliente)</b> do registro no Azure. O passo a passo está no README.</p>
+        <p class="muted">Endereço de redirecionamento a cadastrar no Azure (tipo SPA):</p>
+        <p><code id="setup-redirect"></code></p>
+      </div>
+    </section>
+
+    <!-- Login -->
+    <section id="view-login" class="view" hidden>
+      <div class="card center">
+        <h2>Entrar</h2>
+        <p>Entre com a conta Microsoft onde chegam os e-mails do banco e da contabilidade. O app só lê os e-mails; nada sai deste aparelho.</p>
+        <button id="btn-login" class="btn">Entrar com a conta Microsoft</button>
+        <p id="login-error" class="error" hidden></p>
+      </div>
+    </section>
+
+    <!-- Início -->
+    <section id="view-inicio" class="view" hidden>
+      <div class="row-between">
+        <h2 class="h2">Resumo do mês</h2>
+        <select id="sel-mes" class="select" aria-label="Mês"></select>
+      </div>
+      <p id="lede" class="lede"></p>
+      <div class="kpis">
+        <div class="kpi"><p class="kpi-l">Entradas</p><p class="kpi-v pos" id="k-ent">—</p></div>
+        <div class="kpi"><p class="kpi-l">Saídas</p><p class="kpi-v" id="k-sai">—</p></div>
+        <div class="kpi"><p class="kpi-l">Impostos pagos</p><p class="kpi-v" id="k-imp">—</p></div>
+        <div class="kpi"><p class="kpi-l">Para o sócio</p><p class="kpi-v" id="k-soc">—</p></div>
+      </div>
+
+      <h2 class="h2">Próximas obrigações</h2>
+      <div id="proximas" class="list"></div>
+
+      <h2 class="h2">Entradas e saídas por mês</h2>
+      <div class="legend"><span><i class="sw sw-in"></i>Entradas</span><span><i class="sw sw-out"></i>Saídas</span></div>
+      <div id="chart" class="chart"></div>
+      <p class="note">Somado a partir dos e-mails de aviso da Cora. Não é o saldo da conta: só entra o que gerou e-mail.</p>
+    </section>
+
+    <!-- Obrigações -->
+    <section id="view-contas" class="view" hidden>
+      <h2 class="h2">Obrigações e vencimentos</h2>
+      <p class="note">Guias da contabilidade e boletos avisados pela Cora, conferidos com os pagamentos da conta (mesmo favorecido e valor, pago até o vencimento).</p>
+      <div id="obrigacoes" class="list"></div>
+    </section>
+
+    <!-- Extrato -->
+    <section id="view-extrato" class="view" hidden>
+      <div class="row-between">
+        <h2 class="h2">Movimentações</h2>
+        <select id="sel-filtro" class="select" aria-label="Filtrar">
+          <option value="">Todas</option>
+          <option value="Entrada">Entradas</option>
+          <option value="Saída">Saídas</option>
+          <option value="Boleto a vencer">Boletos a vencer</option>
+        </select>
+      </div>
+      <div id="extrato" class="list"></div>
+    </section>
+
+    <!-- Contábil -->
+    <section id="view-contabil" class="view" hidden>
+      <h2 class="h2">Resultado por competência</h2>
+      <p class="note">Do relatório mensal da Movo Contabilidade (regime de competência).</p>
+      <div id="resultado"></div>
+
+      <h2 class="h2">Documentos da contabilidade</h2>
+      <div id="documentos" class="list"></div>
+
+      <h2 class="h2">Cadastro</h2>
+      <dl class="card dl">
+        <div><dt>Razão social</dt><dd>CS SERVICOS ADMINISTRATIVOS LTDA</dd></div>
+        <div><dt>CNPJ</dt><dd>69.388.555/0001-59</dd></div>
+        <div><dt>Sócio</dt><dd>Carlos Antonio de Souza Junior</dd></div>
+        <div><dt>Regime</dt><dd>Simples Nacional</dd></div>
+        <div><dt>Banco</dt><dd>Cora (conta PJ)</dd></div>
+        <div><dt>Contabilidade</dt><dd>Movo Contabilidade · Fabio Fonseca · contato@movocontabilidade.com.br</dd></div>
+        <div><dt>Cliente principal</dt><dd>Kamino</dd></div>
+        <div><dt>Certificado digital</dt><dd>e-CNPJ A1 (12 meses), aprovado em 30/09/2026 · renovar antes de 30/09/2027</dd></div>
+      </dl>
+      <button id="btn-logout" class="btn btn-ghost">Sair da conta</button>
+    </section>
+  </main>
+
+  <nav id="tabs" class="tabs" hidden>
+    <button data-tab="inicio" class="tab active"><span class="ti">◎</span>Início</button>
+    <button data-tab="contas" class="tab"><span class="ti">◷</span>Obrigações</button>
+    <button data-tab="extrato" class="tab"><span class="ti">≡</span>Extrato</button>
+    <button data-tab="contabil" class="tab"><span class="ti">▤</span>Contábil</button>
+  </nav>
+
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
+  <script src="graph.js"></script>
+  <script src="parse.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

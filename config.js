@@ -1,7 +1,7 @@
 // Configuração do app. Preencha CLIENT_ID com o "ID do aplicativo (cliente)"
 // do registro feito no portal do Azure (veja o README).
 window.CS_CONFIG = {
-  CLIENT_ID: 'COLE_AQUI_O_CLIENT_ID',
+  CLIENT_ID: 'b55a4897-05e0-434d-9585-30cff62e1686',
   // Deixe vazio para usar o endereço onde o app está publicado.
   // Ele precisa ser idêntico ao "URI de redirecionamento" (SPA) do registro no Azure.
   REDIRECT_URI: '',

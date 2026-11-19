@@ -1,6 +1,6 @@
 // Guarda os arquivos do app para abrir rápido e sem internet.
 // Os e-mails não passam por aqui: os dados salvos ficam no próprio app.
-const VERSAO = 'cs-financeiro-v1';
+const VERSAO = 'cs-financeiro-v2';
 const ARQUIVOS = ['./', 'index.html', 'styles.css', 'config.js', 'auth.js', 'graph.js', 'parse.js', 'app.js',
   'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
